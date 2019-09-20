@@ -1538,7 +1538,7 @@ p {
 
 .single-support .support-icon {
     position: relative;
-    z-index: 1;
+   
     padding-left: 12px;
 }
 
@@ -2467,7 +2467,6 @@ p {
     font-weight: 500;
     margin-bottom: 0;
     margin-right: 15px;
-    width: 65px;
 }
 
 .toolbar-sorter {
