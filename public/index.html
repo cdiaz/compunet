@@ -221,16 +221,7 @@
             </div>
             <div class="sidebar-categorie mb-30">
               <h3 class="sidebar-title">Marcas</h3>
-              <ul class="sidbar-style">
-                <li class="form-check">
-                  <input class="form-check-input" value="#" type="checkbox">
-                  <label class="form-check-label">Acer</label>
-                </li>
-                <li class="form-check">
-                  <input class="form-check-input" value="#" type="checkbox">
-                  <label class="form-check-label">Toshiba</label>
-                </li>
-              </ul>
+              <div id="brands"></div>
             </div>
           </div>
           <div class="col-lg-9 order-1 order-lg-2">
@@ -489,6 +480,21 @@
         document.getElementById('categories').appendChild(toAddCategories);
       });
 
+      db.collection("marcas").get().then((querySnapshot) => {
+        let toAddbrands = document.createDocumentFragment();
+        querySnapshot.forEach((doc) => {
+          let brand = document.createElement('ul');
+          brand.className = "sidbar-style";
+          brand.innerHTML = `
+          <li class="form-check">
+            <input class="form-check-input" value="#" type="checkbox">
+            <label class="form-check-label">${doc.data()['nombre']}</label>
+          </li>
+          `
+          toAddbrands.appendChild(brand);
+        })
+        document.getElementById('brands').appendChild(toAddbrands);
+      });
 
       db.collection("productos").get()
       .then((querySnapshot) => {
