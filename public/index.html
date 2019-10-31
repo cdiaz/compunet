@@ -215,25 +215,8 @@
             <div class="sidebar shop-sidebar">
               <div class="sidebar-categorie mb-30">
                 <h3 class="sidebar-title">Categorias</h3>
-                <div id="categorias"></div>
-                <ul class="sidbar-style">
+                <div id="categories"></div>
 
-                  <li class="form-check">
-                    <input class="form-check-input" value="#" id="camera" type="checkbox">
-                    <label class="form-check-label" for="camera">Computadores Portatiles</label>
-                  </li>
-
-                  <li class="form-check">
-                    <input class="form-check-input" value="#" id="GamePad" type="checkbox">
-                    <label class="form-check-label" for="GamePad">Computadores de Escritorio</label>
-                  </li>
-
-                  <li class="form-check">
-                    <input class="form-check-input" value="#" id="Digital" type="checkbox">
-                    <label class="form-check-label" for="Digital">Servidores</label>
-                  </li>
-
-                </ul>
               </div>
             </div>
             <div class="sidebar-categorie mb-30">
@@ -489,6 +472,23 @@
       firebase.initializeApp(firebaseConfig);
 
       let db = firebase.firestore();
+
+      db.collection("categorias").get().then((querySnapshot) => {
+        let toAddCategories = document.createDocumentFragment();
+        querySnapshot.forEach((doc) => {
+          let category = document.createElement('ul');
+          category.className = "csidbar-style";
+          category.innerHTML = `
+          <li class="form-check">
+            <input class="form-check-input" value="#" id="${doc.id}" type="checkbox">
+            <label class="form-check-label" for="${doc.id}">${doc.data()['nombre']}</label>
+          </li>
+          `
+          toAddCategories.appendChild(category);
+        })
+        document.getElementById('categories').appendChild(toAddCategories);
+      });
+
 
       db.collection("productos").get()
       .then((querySnapshot) => {
