@@ -17,6 +17,8 @@
 
   <!-- Custom styles for this template-->
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/compunet.css">
+  <link rel="stylesheet" href="css/table.css">
 
 </head>
 
@@ -175,9 +177,26 @@
         <!-- /.container-fluid -->
 
       </div>
-      <!-- End of Main Content -->
-
-      <!-- Footer -->
+      
+      <div class="col-12">
+          <div class="m-portlet m-portlet--full-height ">
+  
+            <table class="table-fill" id="TablaCategorias">
+              <thead>
+                <tr>
+                  <th class="text-left">Nombre</th>
+                  <th class="text-left">id</th>
+                </tr>
+              </thead>
+              <tbody class="table-hover" id="TBL1">
+  
+  
+              </tbody>
+            </table>
+  
+  
+          </div>
+        </div>
       <footer class="sticky-footer bg-white">
         <div class="container my-auto">
           <div class="copyright text-center my-auto">
@@ -234,6 +253,43 @@
   <script src="js/demo/chart-area-demo.js"></script>
   <script src="js/demo/chart-pie-demo.js"></script>
 
+  <script src="https://www.gstatic.com/firebasejs/7.2.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-firestore.js"></script>
+  
+  <script>
+      var firebaseConfig = {
+        apiKey: "AIzaSyD-OHN9qiL5GVXJ9aIx6-PmaxrcSiT1qHs",
+        authDomain: "compunet-florencia.firebaseapp.com",
+        databaseURL: "https://compunet-florencia.firebaseio.com",
+        projectId: "compunet-florencia",
+        storageBucket: "compunet-florencia.appspot.com",
+        messagingSenderId: "349534666072",
+        appId: "1:349534666072:web:6ba235193b848ede4cb92d"
+      };
+  
+      firebase.initializeApp(firebaseConfig);
+  
+      let db = firebase.firestore();
+  
+      db.collection("marcas").get().then((querySnapshot) => {
+        let toAddCategories = document.createDocumentFragment();
+        querySnapshot.forEach((doc) => {
+          let category = document.createElement('ul');
+          category.className = "csidbar-style";
+          category.innerHTML = `
+          <tr>
+                    <td class="text-left">${doc.data()['nombre']}</td>
+                    
+                  </tr>
+            `
+          toAddCategories.appendChild(category);
+        })
+        document.getElementById('TBL1').appendChild(toAddCategories);
+      });
+    </script>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
 </body>
 
 </html>
