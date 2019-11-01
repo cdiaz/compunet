@@ -21,7 +21,7 @@
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/compunet.css">
   <link rel="stylesheet" href="css/table.css">
-  
+
 
 </head>
 
@@ -175,7 +175,7 @@
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Productos</h1>
-            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+            <a href="agregarproducto.html" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                 class="fas fa-download fa-sm text-white-50"></i> Registrar Producto</a>
           </div>
 
@@ -238,6 +238,8 @@
     </div>
   </div>
 
+ 
+
   <!-- Bootstrap core JavaScript-->
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -247,9 +249,11 @@
 
   <!-- Custom scripts for all pages-->
   <script src="js/sb-admin-2.min.js"></script>
+  
 
   <!-- Page level plugins -->
   <script src="vendor/chart.js/Chart.min.js"></script>
+
 
   <!-- Page level custom scripts -->
   <script src="js/demo/chart-area-demo.js"></script>
@@ -269,15 +273,12 @@
       messagingSenderId: "349534666072",
       appId: "1:349534666072:web:6ba235193b848ede4cb92d"
     };
-
     firebase.initializeApp(firebaseConfig);
-
     let db = firebase.firestore();
-
 
     db.collection("productos").get()
       .then((querySnapshot) => {
-       
+
         let toAdd = document.createDocumentFragment();
         querySnapshot.forEach((doc) => {
           let product = document.createElement('div');
@@ -315,14 +316,133 @@
               </div>
             </div>
             
-            <button onclick="leerNoticiaID('MZdrmDDygbTGwR9vuU1U')" type="button" class="btn btn-default fas fa-edit"></button>
-            <button onclick="delNoticia('MZdrmDDygbTGwR9vuU1U')" type="button" class="btn btn-default fas fa-trash-alt"></button>
+            <button onclick="verProducto('xGlgqB70TusBLPqx3Bct')" type="button" class="btn btn-default fas fa-edit"></button>
+            <button onclick="eliminarProducto('xGlgqB70TusBLPqx3Bct')" type="button" class="btn btn-default fas fa-trash-alt"></button>
           </div>`;
           toAdd.appendChild(product);
-          
+
         });
         document.getElementById('products').appendChild(toAdd);
       });
+
+     
+    //Definimos variables para los input
+    var nombre = document.getElementById('nombreText');
+    var precio = document.getElementById('precioText');
+    var marca = document.getElementById('marcaText');
+    var categoria = document.getElementById('categoriaText');
+    var imagen = document.getElementById('imgText');
+    var oferta = document.getElementById('ofertaText');
+    var nuevo = document.getElementById('nuevo');
+    var listaNoticia = document.getElementById('listproducto');
+    //Definimos variables para los botones
+    var btnGuardar = document.getElementById('guardar');
+    var btnActualizar = document.getElementById('actulaizar');
+
+    //Variable global para almacenar el id del producto
+    var idProducto = "";
+
+    //Metodo para almacenar la informacion en la BD. Evento del boton guardar
+    function guardarNoticia() {
+      db.collection("productos").add({
+        nombre: nombre.value,
+        precio: precio.value,
+        marca: marca.value,
+        categoria: cagetoria.value,
+        imagen: imagen.value,
+        
+      })
+        .then(function (docRef) {
+          console.log("Documento guardado: ", docRef.id);
+          listarNoticias();
+        })
+        .catch(function (error) {
+          console.error("Error: ", error);
+        });
+
+    }
+    //Metodo para listar las noticias almacenadas en la BD
+    function listarNoticias() {
+      listaNoticia.innerHTML = "";
+      db.collection("productos").get().then((querySnapshot) => {
+        querySnapshot.forEach(async (doc) => {
+          listaNoticia.innerHTML += `
+                <tr>
+                    <td>${doc.data().nombre}</td>
+                    <td>${doc.data().precio}</td>
+                    <td>${doc.data().marca}</td>
+                    <td>${doc.data().categoría}</td>
+                    <td>${doc.data().imagen}</td>
+                    <td>${doc.data().oferta}</td>
+                    <td>${doc.data().nuevo}</td>
+                   
+                    <td>
+                        <button onclick="verProducto('${doc.id}')" type="button" class="btn btn-default fas fa-edit"></button>
+                        <button onclick="eliminarProducto('${doc.id}')" type="button" class="btn btn-default fas fa-trash-alt"></button>
+                    </td>
+                </tr>
+            `;
+        });
+      });
+    }
+
+    //lee la noticia y la muestra en los input 
+    function verProducto(id) {
+      
+      idNoticia = id;
+      btnGuardar.classList.add('d-none');
+      btnActualizar.classList.remove('d-none');
+      db.collection("productos").doc(id)
+        .onSnapshot(async function (doc) {
+          nombre.value = doc.data().nombre;
+          precio.value = doc.data().precio;
+          marca.value = doc.data().marca;
+          categoria.value = doc.data().categoria;
+          nombre.value = doc.data().nombre;
+          imagen.value = doc.data().imagen;
+          oferta.value = doc.data().oferta;
+          nuevo.value = doc.data().nuevo;
+
+
+        });
+    }
+
+    function actualizarNoticia() {
+      var dato = db.collection("productos").doc(idProducto);
+
+      dato.update({
+        nombre: nombre.value,
+        precio: precio.value,
+        marca: marca.value,
+        categoria: cagetoria.value,
+        imagen: imagen.value,
+        oferta: oferta.value,
+        nuevo: nuevo.value
+      })
+        .then(function () {
+          console.log('Producto actualizado');
+          btnGuardar.classList.remove('d-none');
+          btnActualizar.classList.add('d-none');
+          listarNoticias();
+        })
+        .catch(function (err) {
+          console.error("Error: ", err);
+        })
+    }
+
+    //Metodo para eliminar Noticas xGlgqB70TusBLPqx3Bct
+    function eliminarProducto(id) {
+      var dato = db.collection("productos").doc(id).delete()
+        .then(function () {
+          console.log("Noticia Eliminada!");
+         
+        }).catch(function (error) {
+          console.error("Error: ", error);
+        });
+
+    }
+
+
 
   </script>
 
